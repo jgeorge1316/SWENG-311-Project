@@ -7,8 +7,7 @@ public class Account {
     private String url;
     private String notes;
 
-    public Account(int accountId, int userId, String accountName, String username,
-                   String password, String url, String notes) {
+    public Account(int accountId, int userId, String accountName, String username, String password, String url, String notes) {
         this.accountId = accountId;
         this.userId = userId;
         this.accountName = accountName;
@@ -18,8 +17,7 @@ public class Account {
         this.notes = notes;
     }
 
-    public Account(int userId, String accountName, String username,
-                   String password, String url, String notes) {
+    public Account(int userId, String accountName, String username, String password, String url, String notes) {
         this(-1, userId, accountName, username, password, url, notes);
     }
     public int getAccountId() {
