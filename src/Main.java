@@ -3,18 +3,39 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        String MasterPass = "";
-
+        System.out.println("Enter 1 for Create Account, Enter 2 for Log-in.");
         Scanner input = new Scanner(System.in);
+
         while (true) {
-            System.out.println("Enter your master password: ");
-            String inputPass = input.nextLine();
-            if (inputPass.equals("Pass")) {
-                break;
+            int userInput = input.nextInt();
+
+
+            if(userInput == 1) {
+
+
             }
+            else if(userInput == 2) {
+
+
+            }
+            else{
+                System.out.println("Invalid Input");
         }
 
-        System.out.println("Enter 1 for Create Account, 2 for search for account, 3 for account info.");
-        int userInput = input.nextInt();
+            String MasterPass = "";
+
+
+            while (true) {
+                System.out.println("Enter your master password: ");
+                String inputPass = input.nextLine();
+                if (inputPass.equals("Pass")) {
+                    break;
+                }
+            }
+
+
+        }
+
+
     }
 }
