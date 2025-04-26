@@ -13,7 +13,8 @@ public class Main {
                 break;
             }
         }
-            System.out.println("Enter 1 for Create Account, 2 for search for account, 3 for account info.");
-            int userInput = input.nextInt();
+
+        System.out.println("Enter 1 for Create Account, 2 for search for account, 3 for account info.");
+        int userInput = input.nextInt();
     }
 }
