@@ -1,7 +1,7 @@
 import java.sql.*;
 import java.util.Scanner;
 
-public class test2 {
+public class demo {
 
     private static final String DB_URL = "jdbc:derby:NotesPasswordDB;create=true";
 
@@ -50,9 +50,11 @@ public class test2 {
             System.out.println("\n===== Notes and Password Manager =====");
             System.out.println("1. Add Note");
             System.out.println("2. View Notes");
-            System.out.println("3. Add Password");
-            System.out.println("4. View Passwords");
-            System.out.println("5. Exit");
+            System.out.println("3. Delete Note");
+            System.out.println("4. Add Password");
+            System.out.println("5. View Passwords");
+            System.out.println("6. Delete Password");
+            System.out.println("7. Exit");
             System.out.print("Choose an option: ");
 
             int choice = Integer.parseInt(scanner.nextLine());
@@ -60,9 +62,11 @@ public class test2 {
             switch (choice) {
                 case 1 -> addNote(conn, scanner);
                 case 2 -> viewNotes(conn);
-                case 3 -> addPassword(conn, scanner);
-                case 4 -> viewPasswords(conn);
-                case 5 -> {
+                case 3 -> deleteNote(conn, scanner);
+                case 4 -> addPassword(conn, scanner);
+                case 5 -> viewPasswords(conn);
+                case 6 -> deletePassword(conn, scanner);
+                case 7 -> {
                     System.out.println("Goodbye!");
                     return;
                 }
@@ -70,6 +74,45 @@ public class test2 {
             }
         }
     }
+
+    private static void deleteNote(Connection conn, Scanner scanner) {
+        try {
+            System.out.print("Enter the ID of the note to delete: ");
+            int id = Integer.parseInt(scanner.nextLine());
+
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM Notes WHERE id = ?");
+            ps.setInt(1, id);
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Note deleted.");
+            } else {
+                System.out.println("Note not found.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void deletePassword(Connection conn, Scanner scanner) {
+        try {
+            System.out.print("Enter the ID of the password to delete: ");
+            int id = Integer.parseInt(scanner.nextLine());
+
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM Passwords WHERE id = ?");
+            ps.setInt(1, id);
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Password deleted.");
+            } else {
+                System.out.println("Password not found.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private static void addNote(Connection conn, Scanner scanner) {
         try {
