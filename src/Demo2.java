@@ -31,14 +31,14 @@ public class Demo2 extends JFrame {
     }
 
     private void initComponents() {
-        // Create tabbed pane
+        //Create tabbed pane
         tabbedPane = new JTabbedPane();
 
-        // Notes panel
+        //Notes panel
         JPanel notesPanel = new JPanel(new BorderLayout(10, 10));
         notesPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Notes table
+        //Notes table
         String[] notesColumns = {"ID", "Title"};
         notesModel = new DefaultTableModel(notesColumns, 0) {
             @Override
@@ -52,14 +52,14 @@ public class Demo2 extends JFrame {
         JScrollPane notesScrollPane = new JScrollPane(notesTable);
         notesScrollPane.setPreferredSize(new Dimension(250, 0));
 
-        // Note content area
+        //Note content area
         noteContentArea = new JTextArea();
         noteContentArea.setEditable(false);
         noteContentArea.setLineWrap(true);
         noteContentArea.setWrapStyleWord(true);
         JScrollPane contentScrollPane = new JScrollPane(noteContentArea);
 
-        // Note selection listener
+        //Note selection listener
         notesTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && notesTable.getSelectedRow() != -1) {
                 int noteId = (int) notesTable.getValueAt(notesTable.getSelectedRow(), 0);
@@ -67,24 +67,24 @@ public class Demo2 extends JFrame {
             }
         });
 
-        // Notes buttons
+        //Notes buttons
         JPanel notesButtonPanel = new JPanel();
         addNoteBtn = new JButton("Add Note");
         deleteNoteBtn = new JButton("Delete Note");
         notesButtonPanel.add(addNoteBtn);
         notesButtonPanel.add(deleteNoteBtn);
 
-        // Add components to notes panel
+        //Add components to notes panel
         JSplitPane notesSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, notesScrollPane, contentScrollPane);
         notesSplitPane.setResizeWeight(0.3);
         notesPanel.add(notesSplitPane, BorderLayout.CENTER);
         notesPanel.add(notesButtonPanel, BorderLayout.SOUTH);
 
-        // Passwords panel
+        //Passwords panel
         JPanel passwordsPanel = new JPanel(new BorderLayout(10, 10));
         passwordsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Passwords table
+        //Passwords table
         String[] passwordsColumns = {"ID", "Title", "Username", "Password"};
         passwordsModel = new DefaultTableModel(passwordsColumns, 0) {
             @Override
@@ -97,7 +97,7 @@ public class Demo2 extends JFrame {
         passwordsTable.getColumnModel().getColumn(0).setMaxWidth(50);
         JScrollPane passwordsScrollPane = new JScrollPane(passwordsTable);
 
-        // Passwords buttons
+        //Passwords buttons
         JPanel passwordsButtonPanel = new JPanel();
         addPasswordBtn = new JButton("Add Password");
         deletePasswordBtn = new JButton("Delete Password");
@@ -106,25 +106,25 @@ public class Demo2 extends JFrame {
         passwordsButtonPanel.add(deletePasswordBtn);
         passwordsButtonPanel.add(resetCredentialsBtn);
 
-        // Add components to passwords panel
+        //Add components to passwords panel
         passwordsPanel.add(passwordsScrollPane, BorderLayout.CENTER);
         passwordsPanel.add(passwordsButtonPanel, BorderLayout.SOUTH);
 
-        // Add tabs
+        //Add tabs
         tabbedPane.addTab("Notes", new ImageIcon(), notesPanel, "Manage your notes");
         tabbedPane.addTab("Passwords", new ImageIcon(), passwordsPanel, "Manage your passwords");
 
-        // Add to frame
+        //Add to frame
         add(tabbedPane);
 
-        // Button listeners
+        //Button listeners
         addNoteBtn.addActionListener(e -> showAddNoteDialog());
         deleteNoteBtn.addActionListener(e -> deleteSelectedNote());
         addPasswordBtn.addActionListener(e -> showAddPasswordDialog());
         deletePasswordBtn.addActionListener(e -> deleteSelectedPassword());
         resetCredentialsBtn.addActionListener(e -> showResetCredentialsDialog());
 
-        // Window close event to properly shut down DB
+        //Window close event to properly shut down DB
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -186,19 +186,13 @@ public class Demo2 extends JFrame {
             String password = new String(passwordField.getPassword());
 
             if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(loginDialog,
-                        "Username and password cannot be empty",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(loginDialog, "Username and password cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (isNewDB) {
                 setupDatabase(username, password);
-                JOptionPane.showMessageDialog(loginDialog,
-                        "Database created successfully. Please log in.",
-                        "Success",
-                        JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(loginDialog, "Database created successfully. Please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 loginDialog.dispose();
                 showLoginDialog(false);
             } else {
@@ -206,10 +200,7 @@ public class Demo2 extends JFrame {
                     loginDialog.dispose();
                     refreshTables();
                 } else {
-                    JOptionPane.showMessageDialog(loginDialog,
-                            "Login failed. Please check your credentials.",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(loginDialog, "Login failed. Please check your credentials.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -229,18 +220,14 @@ public class Demo2 extends JFrame {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Error creating database: " + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error creating database: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private boolean connectToDatabase(String username, String password) {
         try {
-            connection = DriverManager.getConnection(
-                    "jdbc:derby:" + DB_NAME + ";user=" + username + ";password=" + password);
-            // Ensure we use the APP schema where tables were created
+            connection = DriverManager.getConnection("jdbc:derby:" + DB_NAME + ";user=" + username + ";password=" + password);
+
             try (Statement stmt = connection.createStatement()) {
                 stmt.execute("SET SCHEMA APP");
             }
@@ -253,10 +240,7 @@ public class Demo2 extends JFrame {
 
     private void createTables(Connection conn) {
         try (Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate("CREATE TABLE Notes (" +
-                    "id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," +
-                    "title VARCHAR(255)," +
-                    "content VARCHAR(1000))");
+            stmt.executeUpdate("CREATE TABLE Notes (" + "id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," + "title VARCHAR(255)," + "content VARCHAR(1000))");
         } catch (SQLException e) {
             if (!tableAlreadyExists(e)) {
                 e.printStackTrace();
@@ -264,11 +248,7 @@ public class Demo2 extends JFrame {
         }
 
         try (Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate("CREATE TABLE Passwords (" +
-                    "id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," +
-                    "title VARCHAR(255)," +
-                    "username VARCHAR(255)," +
-                    "password VARCHAR(255))");
+            stmt.executeUpdate("CREATE TABLE Passwords (" + "id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," + "title VARCHAR(255)," + "username VARCHAR(255)," + "password VARCHAR(255))");
         } catch (SQLException e) {
             if (!tableAlreadyExists(e)) {
                 e.printStackTrace();
@@ -282,36 +262,32 @@ public class Demo2 extends JFrame {
 
     private void setupAuthentication(Connection conn, String username, String password) {
         try (Statement stmt = conn.createStatement()) {
-            // Enable built-in authentication
-            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" +
-                    "'derby.connection.requireAuthentication', 'true')");
+            //Enable built-in authentication
+            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" + "'derby.connection.requireAuthentication', 'true')");
 
-            // Set the authentication provider to 'BUILTIN'
-            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" +
-                    "'derby.authentication.provider', 'BUILTIN')");
+            //Set the authentication provider to 'BUILTIN'
+            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" + "'derby.authentication.provider', 'BUILTIN')");
 
-            // Create a user - make sure to use the correct syntax
-            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" +
-                    "'derby.user." + username + "', '" + password + "')");
+            //Create a user - make sure to use the correct syntax
+            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" + "'derby.user." + username + "', '" + password + "')");
 
-            // Set default user access permissions
-            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" +
-                    "'derby.database.fullAccessUsers', '" + username + "')");
+            //Set default user access permissions
+            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" + "'derby.database.fullAccessUsers', '" + username + "')");
 
-            // Make sure changes are committed
+            //changes are committed
             conn.commit();
 
-            // Shutdown DB properly to apply new authentication settings
+
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         try {
-            // Proper shutdown to ensure settings are applied
+
             DriverManager.getConnection("jdbc:derby:" + DB_NAME + ";shutdown=true");
         } catch (SQLException e) {
-            // Ignore expected shutdown exception (XJ015)
+
             if (!"XJ015".equals(e.getSQLState())) {
                 e.printStackTrace();
             }
@@ -336,10 +312,7 @@ public class Demo2 extends JFrame {
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Error loading notes: " + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading notes: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -361,10 +334,7 @@ public class Demo2 extends JFrame {
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Error loading passwords: " + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading passwords: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -382,10 +352,7 @@ public class Demo2 extends JFrame {
             ps.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Error loading note content: " + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading note content: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -426,10 +393,7 @@ public class Demo2 extends JFrame {
             String content = contentArea.getText().trim();
 
             if (title.isEmpty()) {
-                JOptionPane.showMessageDialog(addNoteDialog,
-                        "Title cannot be empty",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(addNoteDialog, "Title cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -456,10 +420,7 @@ public class Demo2 extends JFrame {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Error adding note: " + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error adding note: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -467,19 +428,13 @@ public class Demo2 extends JFrame {
     private void deleteSelectedNote() {
         int selectedRow = notesTable.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this,
-                    "Please select a note to delete",
-                    "No Selection",
-                    JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a note to delete", "No Selection", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int noteId = (int) notesTable.getValueAt(selectedRow, 0);
 
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to delete this note?",
-                "Confirm Delete",
-                JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this note?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
             if (deleteNote(noteId)) {
@@ -498,10 +453,7 @@ public class Demo2 extends JFrame {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Error deleting note: " + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error deleting note: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -563,10 +515,7 @@ public class Demo2 extends JFrame {
             String password = new String(passwordField.getPassword());
 
             if (title.isEmpty()) {
-                JOptionPane.showMessageDialog(addPasswordDialog,
-                        "Title cannot be empty",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(addPasswordDialog, "Title cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -585,8 +534,7 @@ public class Demo2 extends JFrame {
 
     private boolean addPassword(String title, String username, String password) {
         try {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO Passwords (title, username, password) VALUES (?, ?, ?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO Passwords (title, username, password) VALUES (?, ?, ?)");
             ps.setString(1, title);
             ps.setString(2, username);
             ps.setString(3, password);
@@ -595,10 +543,7 @@ public class Demo2 extends JFrame {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Error adding password: " + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error adding password: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -606,19 +551,13 @@ public class Demo2 extends JFrame {
     private void deleteSelectedPassword() {
         int selectedRow = passwordsTable.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this,
-                    "Please select a password to delete",
-                    "No Selection",
-                    JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a password to delete", "No Selection", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int passwordId = (int) passwordsTable.getValueAt(selectedRow, 0);
 
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to delete this password?",
-                "Confirm Delete",
-                JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this password?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
             if (deletePassword(passwordId)) {
@@ -636,10 +575,7 @@ public class Demo2 extends JFrame {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Error deleting password: " + e.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error deleting password: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -704,26 +640,12 @@ public class Demo2 extends JFrame {
 
     private void resetAuthentication(String newUser, String newPass) {
         try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(
-                    "CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" +
-                            "'derby.user." + newUser + "','" + newPass + "')");
-            stmt.executeUpdate(
-                    "CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" +
-                            "'derby.database.fullAccessUsers','" + newUser + "')");
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Master credentials reset.\nPlease restart the application to apply changes.",
-                    "Success",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" + "'derby.user." + newUser + "','" + newPass + "')");
+            stmt.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(" + "'derby.database.fullAccessUsers','" + newUser + "')");
+            JOptionPane.showMessageDialog(this, "Master credentials reset.\nPlease restart the application to apply changes.", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Error resetting credentials:\n" + ex.getMessage(),
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this, "Error resetting credentials:\n" + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
