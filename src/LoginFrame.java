@@ -98,12 +98,9 @@ public class LoginFrame extends BaseFrame {
         }
     }
     private void showResetDialog() {
-        JTextField newUsernameField = new JTextField();
         JPasswordField newPasswordField = new JPasswordField();
 
         JPanel panel = new JPanel(new GridLayout(0, 1));
-        panel.add(new JLabel("New Username:"));
-        panel.add(newUsernameField);
         panel.add(new JLabel("New Password:"));
         panel.add(newPasswordField);
 
@@ -111,12 +108,11 @@ public class LoginFrame extends BaseFrame {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
-            String newUsername = newUsernameField.getText().trim();
             String newPassword = new String(newPasswordField.getPassword());
 
-            if (!newUsername.isEmpty() && !newPassword.isEmpty()) {
+            if (!newPassword.isEmpty()) {
                 try {
-                    DatabaseManager.resetLogin(newUsername, newPassword);
+                    DatabaseManager.resetLogin(newPassword);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

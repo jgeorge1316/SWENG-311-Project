@@ -193,12 +193,11 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
-    public static void resetLogin(String username, String password) throws SQLException {
+    public static void resetLogin(String password) throws SQLException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String sql = "UPDATE Users SET username = ?, password = ?";
+            String sql = "UPDATE Users SET password = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, username);
-                stmt.setString(2, password);
+                stmt.setString(1, password);
                 stmt.executeUpdate();
             }
         }
