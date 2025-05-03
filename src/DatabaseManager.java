@@ -7,6 +7,10 @@ import java.util.List;
 public class DatabaseManager {
     private static final String DB_NAME = "NotesPasswordDB";
     private static final String DB_URL  = "jdbc:derby:" + DB_NAME + ";";
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DB_URL);
+    }
+
 
     /** Create DB and tables if they don’t exist */
     public static void initDatabase() {
@@ -189,4 +193,16 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+    public static void resetLogin(String username, String password) throws SQLException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String sql = "UPDATE Users SET username = ?, password = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, username);
+                stmt.setString(2, password);
+                stmt.executeUpdate();
+            }
+        }
+    }
+
+
 }

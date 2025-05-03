@@ -2,6 +2,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 
 public class LoginFrame extends BaseFrame {
     private JTextField  userField  = new JTextField(15);
@@ -31,10 +32,16 @@ public class LoginFrame extends BaseFrame {
         panel.add(passField, gbc);
 
         JButton loginBtn = new JButton("Login");
+
         loginBtn.addActionListener(e -> authenticate());
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
         panel.add(loginBtn, gbc);
 
+        JButton resetButton = new JButton("Reset Login");
+
+        resetButton.addActionListener(e -> showResetDialog());
+        gbc.gridx = 1; gbc.gridy = 2; gbc.gridwidth = 1;
+        panel.add(resetButton, gbc);
         add(panel);
     }
 
@@ -90,4 +97,35 @@ public class LoginFrame extends BaseFrame {
             );
         }
     }
+    private void showResetDialog() {
+        JTextField newUsernameField = new JTextField();
+        JPasswordField newPasswordField = new JPasswordField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("New Username:"));
+        panel.add(newUsernameField);
+        panel.add(new JLabel("New Password:"));
+        panel.add(newPasswordField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Reset Login",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String newUsername = newUsernameField.getText().trim();
+            String newPassword = new String(newPasswordField.getPassword());
+
+            if (!newUsername.isEmpty() && !newPassword.isEmpty()) {
+                try {
+                    DatabaseManager.resetLogin(newUsername, newPassword);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                JOptionPane.showMessageDialog(this, "Login updated successfully!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Fields cannot be empty.",
+                        "Input Error", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
 }
