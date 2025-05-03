@@ -29,7 +29,7 @@ public class NotesManagerFrame extends BaseFrame {
         JScrollPane notesListPane = new JScrollPane(notesTable);
         notesListPane.setPreferredSize(new Dimension(250, 0));
 
-        noteContentArea.setEditable(false);
+        noteContentArea.setEditable(true);
         noteContentArea.setLineWrap(true);
         noteContentArea.setWrapStyleWord(true);
         JScrollPane contentPane = new JScrollPane(noteContentArea);
