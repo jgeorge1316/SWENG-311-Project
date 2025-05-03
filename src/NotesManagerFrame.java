@@ -8,8 +8,19 @@ import java.awt.datatransfer.StringSelection;
 
 public class NotesManagerFrame extends BaseFrame {
     private final String username;
-    private final DefaultTableModel notesModel     = new DefaultTableModel(new String[]{"ID","Title"}, 0);
-    private final DefaultTableModel passwordsModel = new DefaultTableModel(new String[]{"ID","Title","Username","Password"}, 0);
+    private final DefaultTableModel passwordsModel = new DefaultTableModel(new String[]{"ID","Title","Username","Password"}, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column != 0; // Make ID column (index 0) non-editable
+        }
+    };
+
+    private final DefaultTableModel notesModel = new DefaultTableModel(new String[]{"ID","Title"}, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column != 0;
+        }
+    };
     private final JTable notesTable     = new JTable(notesModel);
     private final JTable passwordsTable = new JTable(passwordsModel);
     private final JTextArea noteContentArea = new JTextArea();
@@ -64,6 +75,7 @@ public class NotesManagerFrame extends BaseFrame {
                 noteContentArea.setText(DatabaseManager.getNoteContent(id));
             }
         });
+        noteBtns.add(makeButton("Save Changes", e -> saveNoteEdits()));
 
         // --- Passwords Tab ---
         passwordsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -115,6 +127,7 @@ public class NotesManagerFrame extends BaseFrame {
                 }
             }
         });
+        pwdBtns.add(makeButton("Save Changes", e -> savePasswordEdits()));
 
         // add tabs
         tabs.addTab("Notes", notesTab);
@@ -123,7 +136,49 @@ public class NotesManagerFrame extends BaseFrame {
         add(tabs);
     }
 
+    private void saveNoteEdits() {
+        int selectedRow = notesTable.getSelectedRow();
 
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a note to save.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            int id = (int) notesModel.getValueAt(selectedRow, 0);   // ID
+            String title = (String) notesModel.getValueAt(selectedRow, 1); // Title
+            String content = noteContentArea.getText();             // Content from the editor
+
+            DatabaseManager.updateNote(id, title, content);
+            JOptionPane.showMessageDialog(this, "Note saved successfully.", "Saved", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Failed to save note: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+
+    private void savePasswordEdits() {
+        int rowCount = passwordsModel.getRowCount();
+        for (int i = 0; i < rowCount; i++) {
+            try {
+                int id = ((Number) passwordsModel.getValueAt(i, 0)).intValue();
+                String title = passwordsModel.getValueAt(i, 1).toString();
+                String user = passwordsModel.getValueAt(i, 2).toString();
+                String pass = passwordsModel.getValueAt(i, 3).toString();
+
+                DatabaseManager.updatePassword(id, title, user, pass);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Error saving row " + (i+1) + ": " + ex.getMessage(),
+                        "Save Error",
+                        JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        }
+
+        JOptionPane.showMessageDialog(this, "All changes saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        loadAll();
+    }
 
     private void searchNotes(String query) {
         notesModel.setRowCount(0);

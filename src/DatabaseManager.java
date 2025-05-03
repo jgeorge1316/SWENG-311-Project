@@ -251,4 +251,31 @@ public class DatabaseManager {
         }
         return list;
     }
+
+    public static void updatePassword(int id, String title, String username, String password) {
+        String sql = "UPDATE Passwords SET title=?, username=?, password=? WHERE id=?";
+        try (Connection c = DriverManager.getConnection(DB_URL);
+             PreparedStatement p = c.prepareStatement(sql)) {
+            p.setString(1, title);
+            p.setString(2, username);
+            p.setString(3, password);
+            p.setInt(4, id);
+            p.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateNote(int id, String title, String content) {
+        String sql = "UPDATE Notes SET title=?, content=? WHERE id=?";
+        try (Connection c = DriverManager.getConnection(DB_URL);
+             PreparedStatement p = c.prepareStatement(sql)) {
+            p.setString(1, title);
+            p.setString(2, content);
+            p.setInt(3, id);
+            p.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
