@@ -36,26 +36,29 @@ public class NotesManagerFrame extends BaseFrame {
 
         JSplitPane noteSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, notesListPane, contentPane);
         noteSplit.setResizeWeight(0.3);
-        JPanel notesTab = new JPanel(new BorderLayout(10,10));
-        notesTab.setBorder(new EmptyBorder(10,10,10,10));
+        JPanel notesTab = new JPanel(new BorderLayout(10, 10));
+        notesTab.setBorder(new EmptyBorder(10, 10, 10, 10));
         notesTab.add(noteSplit, BorderLayout.CENTER);
 
-        JPanel noteBottomPanel = new JPanel(new BorderLayout());
+        // [NEW] Search bar for notes
+        JPanel noteSearchPanel = new JPanel(new BorderLayout(5, 5));
+        JTextField noteSearchField = new JTextField();
+        JButton noteSearchButton = new JButton("Search");
+        noteSearchPanel.add(noteSearchField, BorderLayout.CENTER);
+        noteSearchPanel.add(noteSearchButton, BorderLayout.EAST);
+
+        noteSearchField.addActionListener(e -> searchNotes(noteSearchField.getText()));
+        noteSearchButton.addActionListener(e -> searchNotes(noteSearchField.getText()));
+        notesTab.add(noteSearchPanel, BorderLayout.NORTH);
 
         JPanel noteBtns = new JPanel();
-        noteBtns.add(makeButton("Add Note",    e -> addNote()));
+        noteBtns.add(makeButton("Add Note", e -> addNote()));
         noteBtns.add(makeButton("Delete Note", e -> deleteNote()));
-        noteBottomPanel.add(noteBtns, BorderLayout.EAST);
-
-        JTextField noteSearchField = new JTextField(20);
-        noteSearchField.addActionListener(e -> searchNotes(noteSearchField.getText()));
-        noteBottomPanel.add(noteSearchField, BorderLayout.WEST);
-
-        notesTab.add(noteBottomPanel, BorderLayout.SOUTH);
+        notesTab.add(noteBtns, BorderLayout.SOUTH);
 
         notesTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && notesTable.getSelectedRow()>=0) {
-                int id = (int)notesTable.getValueAt(notesTable.getSelectedRow(),0);
+            if (!e.getValueIsAdjusting() && notesTable.getSelectedRow() >= 0) {
+                int id = (int) notesTable.getValueAt(notesTable.getSelectedRow(), 0);
                 noteContentArea.setText(DatabaseManager.getNoteContent(id));
             }
         });
@@ -64,30 +67,35 @@ public class NotesManagerFrame extends BaseFrame {
         passwordsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         passwordsTable.getColumnModel().getColumn(0).setMaxWidth(50);
         JScrollPane pwdListPane = new JScrollPane(passwordsTable);
-        JPanel pwdTab = new JPanel(new BorderLayout(10,10));
-        pwdTab.setBorder(new EmptyBorder(10,10,10,10));
+
+        JPanel pwdTab = new JPanel(new BorderLayout(10, 10));
+        pwdTab.setBorder(new EmptyBorder(10, 10, 10, 10));
         pwdTab.add(pwdListPane, BorderLayout.CENTER);
 
-        JPanel pwdBottomPanel = new JPanel(new BorderLayout());
+        // [NEW] Search bar for passwords
+        JPanel pwdSearchPanel = new JPanel(new BorderLayout(5, 5));
+        JTextField pwdSearchField = new JTextField();
+        JButton pwdSearchButton = new JButton("Search");
+        pwdSearchPanel.add(pwdSearchField, BorderLayout.CENTER);
+        pwdSearchPanel.add(pwdSearchButton, BorderLayout.EAST);
+
+        pwdSearchField.addActionListener(e -> searchPasswords(pwdSearchField.getText()));
+        pwdSearchButton.addActionListener(e -> searchPasswords(pwdSearchField.getText()));
+        pwdTab.add(pwdSearchPanel, BorderLayout.NORTH);
 
         JPanel pwdBtns = new JPanel();
-        pwdBtns.add(makeButton("Add Password",    e -> addPassword()));
+        pwdBtns.add(makeButton("Add Password", e -> addPassword()));
         pwdBtns.add(makeButton("Delete Password", e -> deletePassword()));
-        pwdBottomPanel.add(pwdBtns, BorderLayout.EAST);
-
-        JTextField pwdSearchField = new JTextField(20);
-        pwdSearchField.addActionListener(e -> searchPasswords(pwdSearchField.getText()));
-        pwdBottomPanel.add(pwdSearchField, BorderLayout.WEST);
-
-        pwdTab.add(pwdBottomPanel, BorderLayout.SOUTH);
-
+        pwdTab.add(pwdBtns, BorderLayout.SOUTH);
 
         // add tabs
-        tabs.addTab("Notes",     notesTab);
+        tabs.addTab("Notes", notesTab);
         tabs.addTab("Passwords", pwdTab);
 
         add(tabs);
     }
+
+
 
     private void searchNotes(String query) {
         notesModel.setRowCount(0);
