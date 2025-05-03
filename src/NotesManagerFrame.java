@@ -4,6 +4,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.datatransfer.StringSelection;
 
 public class NotesManagerFrame extends BaseFrame {
     private final String username;
@@ -22,6 +23,7 @@ public class NotesManagerFrame extends BaseFrame {
 
     private void initUI() {
         JTabbedPane tabs = new JTabbedPane();
+        JLabel statusLabel = new JLabel(" ");
 
         // --- Notes Tab ---
         notesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -87,6 +89,32 @@ public class NotesManagerFrame extends BaseFrame {
         pwdBtns.add(makeButton("Add Password", e -> addPassword()));
         pwdBtns.add(makeButton("Delete Password", e -> deletePassword()));
         pwdTab.add(pwdBtns, BorderLayout.SOUTH);
+
+        JPanel pwdBottomPanel = new JPanel(new BorderLayout());
+        pwdBottomPanel.add(pwdBtns, BorderLayout.NORTH);
+        pwdBottomPanel.add(statusLabel, BorderLayout.SOUTH);
+        pwdTab.add(pwdBottomPanel, BorderLayout.SOUTH);
+        // Copy cell content to clipboard on click
+        passwordsTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = passwordsTable.rowAtPoint(e.getPoint());
+                int col = passwordsTable.columnAtPoint(e.getPoint());
+                if (row >= 0 && col >= 0) {
+                    Object value = passwordsTable.getValueAt(row, col);
+                    if (value != null) {
+                        StringSelection selection = new StringSelection(value.toString());
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+                        statusLabel.setText("Copied to clipboard: " + value.toString());
+
+                        // Clear the message after 3 seconds
+                        Timer timer = new Timer(10000, evt -> statusLabel.setText(" "));
+                        timer.setRepeats(false);
+                        timer.start();
+                    }
+                }
+            }
+        });
 
         // add tabs
         tabs.addTab("Notes", notesTab);
