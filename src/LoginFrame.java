@@ -1,12 +1,13 @@
-// LoginFrame.java
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 
-public class LoginFrame extends BaseFrame {
-    private JTextField  userField  = new JTextField(15);
+public class LoginFrame extends BaseFrame implements ActionListener {
+    private JTextField userField = new JTextField(15);
     private JPasswordField passField = new JPasswordField(15);
+    private JButton loginBtn;
+    private JButton resetButton;
 
     public LoginFrame() {
         super("Login", 350, 200);
@@ -18,8 +19,8 @@ public class LoginFrame extends BaseFrame {
 
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5,5,5,5);
-        gbc.fill  = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         gbc.gridx = 0; gbc.gridy = 0;
         panel.add(new JLabel("Username:"), gbc);
@@ -31,26 +32,53 @@ public class LoginFrame extends BaseFrame {
         gbc.gridx = 1;
         panel.add(passField, gbc);
 
-        JButton loginBtn = new JButton("Login");
-
-        loginBtn.addActionListener(e -> authenticate());
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
+        // Login Button
+        loginBtn = new JButton("Login");
+        loginBtn.setActionCommand("LOGIN");
+        loginBtn.addActionListener(this);
+        gbc.gridx = 0; gbc.gridy = 2;
         panel.add(loginBtn, gbc);
 
-        JButton resetButton = new JButton("Reset Login");
-
-        resetButton.addActionListener(e -> showResetDialog());
-        gbc.gridx = 1; gbc.gridy = 2; gbc.gridwidth = 1;
+        // Reset Button
+        resetButton = new JButton("Reset Login");
+        resetButton.setActionCommand("RESET");
+        resetButton.addActionListener(this);
+        gbc.gridx = 1; gbc.gridy = 2;
         panel.add(resetButton, gbc);
+
         add(panel);
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        switch (cmd) {
+            case "LOGIN" -> authenticate();
+            case "RESET" -> showResetDialog();
+        }
+    }
+
+    private void authenticate() {
+        String user = userField.getText().trim();
+        String pass = new String(passField.getPassword());
+        if (DatabaseManager.checkLogin(user, pass)) {
+            dispose();
+            NotesManagerFrame mgr = new NotesManagerFrame(user);
+            mgr.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Login failed. Please check your credentials.",
+                    "Error", JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
     private void showCreateUserDialog() {
-        JTextField  u = new JTextField(15);
+        JTextField u = new JTextField(15);
         JPasswordField p1 = new JPasswordField(15);
         JPasswordField p2 = new JPasswordField(15);
 
-        JPanel dp = new JPanel(new GridLayout(3,2,5,5));
+        JPanel dp = new JPanel(new GridLayout(3, 2, 5, 5));
         dp.add(new JLabel("Create Username:"));
         dp.add(u);
         dp.add(new JLabel("Create Password:"));
@@ -83,20 +111,6 @@ public class LoginFrame extends BaseFrame {
         }
     }
 
-    private void authenticate() {
-        String user = userField.getText().trim();
-        String pass = new String(passField.getPassword());
-        if (DatabaseManager.checkLogin(user, pass)) {
-            dispose();
-            NotesManagerFrame mgr = new NotesManagerFrame(user);
-            mgr.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(this,
-                    "Login failed. Please check your credentials.",
-                    "Error", JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }
     private void showResetDialog() {
         JPasswordField newPasswordField = new JPasswordField();
 
@@ -113,15 +127,14 @@ public class LoginFrame extends BaseFrame {
             if (!newPassword.isEmpty()) {
                 try {
                     DatabaseManager.resetLogin(newPassword);
+                    JOptionPane.showMessageDialog(this, "Login updated successfully!");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                JOptionPane.showMessageDialog(this, "Login updated successfully!");
             } else {
                 JOptionPane.showMessageDialog(this, "Fields cannot be empty.",
                         "Input Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
-
 }
