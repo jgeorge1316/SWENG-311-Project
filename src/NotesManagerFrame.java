@@ -40,10 +40,18 @@ public class NotesManagerFrame extends BaseFrame {
         notesTab.setBorder(new EmptyBorder(10,10,10,10));
         notesTab.add(noteSplit, BorderLayout.CENTER);
 
+        JPanel noteBottomPanel = new JPanel(new BorderLayout());
+
         JPanel noteBtns = new JPanel();
         noteBtns.add(makeButton("Add Note",    e -> addNote()));
         noteBtns.add(makeButton("Delete Note", e -> deleteNote()));
-        notesTab.add(noteBtns, BorderLayout.SOUTH);
+        noteBottomPanel.add(noteBtns, BorderLayout.EAST);
+
+        JTextField noteSearchField = new JTextField(20);
+        noteSearchField.addActionListener(e -> searchNotes(noteSearchField.getText()));
+        noteBottomPanel.add(noteSearchField, BorderLayout.WEST);
+
+        notesTab.add(noteBottomPanel, BorderLayout.SOUTH);
 
         notesTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && notesTable.getSelectedRow()>=0) {
@@ -60,16 +68,39 @@ public class NotesManagerFrame extends BaseFrame {
         pwdTab.setBorder(new EmptyBorder(10,10,10,10));
         pwdTab.add(pwdListPane, BorderLayout.CENTER);
 
+        JPanel pwdBottomPanel = new JPanel(new BorderLayout());
+
         JPanel pwdBtns = new JPanel();
         pwdBtns.add(makeButton("Add Password",    e -> addPassword()));
         pwdBtns.add(makeButton("Delete Password", e -> deletePassword()));
-        pwdTab.add(pwdBtns, BorderLayout.SOUTH);
+        pwdBottomPanel.add(pwdBtns, BorderLayout.EAST);
+
+        JTextField pwdSearchField = new JTextField(20);
+        pwdSearchField.addActionListener(e -> searchPasswords(pwdSearchField.getText()));
+        pwdBottomPanel.add(pwdSearchField, BorderLayout.WEST);
+
+        pwdTab.add(pwdBottomPanel, BorderLayout.SOUTH);
+
 
         // add tabs
         tabs.addTab("Notes",     notesTab);
         tabs.addTab("Passwords", pwdTab);
 
         add(tabs);
+    }
+
+    private void searchNotes(String query) {
+        notesModel.setRowCount(0);
+        for (Object[] row : DatabaseManager.searchNotesByTitle(username, query)) {
+            notesModel.addRow(row);
+        }
+    }
+
+    private void searchPasswords(String query) {
+        passwordsModel.setRowCount(0);
+        for (Object[] row : DatabaseManager.searchPasswordsByTitleOrUsername(username, query)) {
+            passwordsModel.addRow(row);
+        }
     }
 
     private JButton makeButton(String text, ActionListener al) {

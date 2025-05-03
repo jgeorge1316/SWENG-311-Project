@@ -189,4 +189,51 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+
+    public static List<Object[]> searchNotesByTitle(String owner, String query) {
+        List<Object[]> list = new ArrayList<>();
+        String sql = "SELECT id, title FROM Notes WHERE owner=? AND LOWER(title) LIKE ?";
+        try (Connection c = DriverManager.getConnection(DB_URL);
+             PreparedStatement p = c.prepareStatement(sql)) {
+            p.setString(1, owner);
+            p.setString(2, "%" + query.toLowerCase() + "%");
+            try (ResultSet rs = p.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Object[]{rs.getInt("id"), rs.getString("title")});
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static List<Object[]> searchPasswordsByTitleOrUsername(String owner, String query) {
+        List<Object[]> list = new ArrayList<>();
+        String sql = """
+        SELECT id, title, username, password
+        FROM Passwords
+        WHERE owner=? AND (LOWER(title) LIKE ? OR LOWER(username) LIKE ?)
+    """;
+        try (Connection c = DriverManager.getConnection(DB_URL);
+             PreparedStatement p = c.prepareStatement(sql)) {
+            p.setString(1, owner);
+            String q = "%" + query.toLowerCase() + "%";
+            p.setString(2, q);
+            p.setString(3, q);
+            try (ResultSet rs = p.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Object[]{
+                            rs.getInt("id"),
+                            rs.getString("title"),
+                            rs.getString("username"),
+                            rs.getString("password")
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
