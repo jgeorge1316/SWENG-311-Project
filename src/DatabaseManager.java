@@ -1,4 +1,3 @@
-// DatabaseManager.java
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,43 +10,23 @@ public class DatabaseManager {
         return DriverManager.getConnection(DB_URL);
     }
 
-
-    /** Create DB and tables if they don’t exist */
     public static void initDatabase() {
         boolean exists = new File(DB_NAME).exists();
         try (Connection conn = DriverManager.getConnection(DB_URL + (exists ? "" : "create=true"))) {
-            // Users table
+            //Users table
             try (Statement s = conn.createStatement()) {
                 s.executeUpdate("""
-                    CREATE TABLE Users (
-                      id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                      username VARCHAR(255) UNIQUE,
-                      password VARCHAR(255)
-                    )
-                """);
+                      CREATE TABLE Users (id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY, username VARCHAR(255) UNIQUE, password VARCHAR(255))""");
             } catch (SQLException e){ if (!"X0Y32".equals(e.getSQLState())) e.printStackTrace(); }
-            // Notes table
+            //Notes table
             try (Statement s = conn.createStatement()) {
                 s.executeUpdate("""
-                    CREATE TABLE Notes (
-                      id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                      owner VARCHAR(255),
-                      title VARCHAR(255),
-                      content VARCHAR(1000)
-                    )
-                """);
+                    CREATE TABLE Notes (id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY, owner VARCHAR(255), title VARCHAR(255), content VARCHAR(1000))""");
             } catch (SQLException e){ if (!"X0Y32".equals(e.getSQLState())) e.printStackTrace(); }
-            // Passwords table
+            //Passwords table
             try (Statement s = conn.createStatement()) {
                 s.executeUpdate("""
-                    CREATE TABLE Passwords (
-                      id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                      owner VARCHAR(255),
-                      title VARCHAR(255),
-                      username VARCHAR(255),
-                      password VARCHAR(255)
-                    )
-                """);
+                    CREATE TABLE Passwords ( id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY, owner VARCHAR(255), title VARCHAR(255), username VARCHAR(255), password VARCHAR(255))""");
             } catch (SQLException e){ if (!"X0Y32".equals(e.getSQLState())) e.printStackTrace(); }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -226,10 +205,7 @@ public class DatabaseManager {
     public static List<Object[]> searchPasswordsByTitleOrUsername(String owner, String query) {
         List<Object[]> list = new ArrayList<>();
         String sql = """
-        SELECT id, title, username, password
-        FROM Passwords
-        WHERE owner=? AND (LOWER(title) LIKE ? OR LOWER(username) LIKE ?)
-    """;
+        SELECT id, title, username, password FROM Passwords WHERE owner=? AND (LOWER(title) LIKE ? OR LOWER(username) LIKE ?)""";
         try (Connection c = DriverManager.getConnection(DB_URL);
              PreparedStatement p = c.prepareStatement(sql)) {
             p.setString(1, owner);

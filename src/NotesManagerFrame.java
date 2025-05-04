@@ -10,7 +10,7 @@ public class NotesManagerFrame extends BaseFrame implements ActionListener {
     private final DefaultTableModel passwordsModel = new DefaultTableModel(new String[]{"ID","Title","Username","Password"}, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column != 0; // Make ID column non-editable
+            return column != 0;
         }
     };
 
@@ -37,7 +37,7 @@ public class NotesManagerFrame extends BaseFrame implements ActionListener {
         JTabbedPane tabs = new JTabbedPane();
         JLabel statusLabel = new JLabel(" ");
 
-        // --- Notes Tab ---
+        //Notes section
         notesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         notesTable.getColumnModel().getColumn(0).setMaxWidth(50);
         JScrollPane notesListPane = new JScrollPane(notesTable);
@@ -54,7 +54,7 @@ public class NotesManagerFrame extends BaseFrame implements ActionListener {
         notesTab.setBorder(new EmptyBorder(10, 10, 10, 10));
         notesTab.add(noteSplit, BorderLayout.CENTER);
 
-        // Search bar for notes
+        //search notes
         noteSearchField = new JTextField();
         JButton noteSearchButton = new JButton("Search");
         noteSearchField.setActionCommand("searchNotes");
@@ -79,7 +79,7 @@ public class NotesManagerFrame extends BaseFrame implements ActionListener {
             }
         });
 
-        // --- Passwords Tab ---
+        //password section
         passwordsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         passwordsTable.getColumnModel().getColumn(0).setMaxWidth(50);
         JScrollPane pwdListPane = new JScrollPane(passwordsTable);
@@ -88,7 +88,7 @@ public class NotesManagerFrame extends BaseFrame implements ActionListener {
         pwdTab.setBorder(new EmptyBorder(10, 10, 10, 10));
         pwdTab.add(pwdListPane, BorderLayout.CENTER);
 
-        // Search bar for passwords
+        //search pass
         pwdSearchField = new JTextField();
         JButton pwdSearchButton = new JButton("Search");
         pwdSearchField.setActionCommand("searchPasswords");
